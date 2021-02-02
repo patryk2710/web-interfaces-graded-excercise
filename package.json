@@ -1,0 +1,22 @@
+{
+  "name": "web-interfaces-graded-excercise",
+  "version": "1.0.0",
+  "description": "API created for the web interfaces graded excercise",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patryk2710/web-interfaces-graded-excercise.git"
+  },
+  "author": "Patryk Rojowiec",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patryk2710/web-interfaces-graded-excercise/issues"
+  },
+  "homepage": "https://github.com/patryk2710/web-interfaces-graded-excercise#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
