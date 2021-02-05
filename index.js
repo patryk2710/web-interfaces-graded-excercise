@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 
 const app = express();
-const todos = require('./services/postings');
+const postings = require('./services/postings');
 const users = require('./services/users');
 const port = 3000;
 const passport = require('passport');
@@ -126,22 +126,56 @@ app.post('/users/:username/postings',
     const parameters = req.params.username;
     console.log(authorized_user);
     console.log(parameters);
-    if(authorized_user == parameters) {
-      res.sendStatus(200);
-    } else {
-      res.sendStatus(403)
+
+    if(authorized_user != parameters) {
+      return res.sendStatus(401)
     }
     console.log(req.body);
-    // if(('description' in req.body) && ( 'dueDate' in req.body)) {
-    //   todos.insertTodo(req.body.description, req.body.dueDate, req.user.id);
-    //   res.json(todos.getAllUserTodos(req.user.id));
-    // }
-    // else {
-    //   res.sendStatus(400);
-    // }
-    
-})
 
+    if('deliveryType' in req.body) {
+      if((req.body.deliveryType == 'delivery') || (req.body.deliveryType == 'pickup')) {
+        if(('title' in req.body) && ( 'description' in req.body) && ('category' in req.body) && ( 'location' in req.body)
+        && ('images' in req.body) && ('askingPrice' in req.body) && ('dateofPosting' in req.body) && ('contactInfo' in req.body)) {
+          console.log('testingssss');
+          postings.insertPosting(req.body.title, req.body.description, req.body.category, req.body.location, req.body.images, req.body.askingPrice, req.body.dateofPosting, req.body.deliveryType, 
+            req.user.username, req.body.contactInfo);
+          //res.setStatus(201);
+          res.json(postings.getAllUserPostings(req.user.username));
+        } else {
+          res.sendStatus(400);
+        }
+      } else {
+        res.sendStatus(400);
+      }
+    }
+    else {
+      sendStatus(400);
+    }
+})
+/*
+if('deliveryType' in req.body) {
+      if((req.body.deliveryType) != (('delivery') || ('pickup'))) {
+        console.log('test')
+        console.log(req.body.deliveryType)
+        return res.sendStatus(400);
+      }
+    console.log('testingfirstif')
+    } else if(('title' in req.body) && ( 'description' in req.body) && ('category' in req.body) && ( 'location' in req.body)
+        && ('images' in req.body) && ('askingPrice' in req.body) && ('dateofPosting' in req.body) && ('deliveryType' in req.body) && ('contactInfo' in req.body)) {
+          console.log('testingesss');
+          postings.insertPosting(req.body.title, req.body.description, req.body.category, req.body.location, req.body.images, req.body.askingPrice, req.body.dateofPosting, req.body.deliveryType, 
+          req.user.username, req.body.contactInfo);
+      
+          console.log('KEKW2')
+          res.setStatus(201);
+          res.json(postings.getAllUserPostings(req.user.username));
+      
+    }
+    else {
+      console.log('KEKW')
+      return res.sendStatus(400);
+    }
+*/
 /* 
       Logging in with http basic in order to obtain JWT
 */
