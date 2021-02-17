@@ -48,20 +48,32 @@ app.post('/users',
     res.json({status: "Missing username from body"})
     return;
   }
+  accountname = users.getUserByName(req.body.username)
+  console.log(accountname);
+  if(accountname != undefined) {
+    res.status(400);
+    res.json({status: "Username already in use!"})
+    return;
+  }
   if('password' in req.body == false ) {
     res.status(400);
     res.json({status: "Missing password from body"})
     return;
   }
-  if('email' in req.body == false ) {
+  if('firstName' in req.body == false ) {
     res.status(400);
-    res.json({status: "Missing email from body"})
+    res.json({status: "Missing first name from body"})
+    return;
+  }
+  if('lastName' in req.body == false ) {
+    res.status(400);
+    res.json({status: "Missing last name from body"})
     return;
   }
 
   const hashedPassword = bcrypt.hashSync(req.body.password, 6);
   console.log(hashedPassword);
-  users.addUser(req.body.username, req.body.email, hashedPassword);
+  users.addUser(req.body.username, hashedPassword, req.body.firstName, req.body.lastName);
 
   res.status(201).json({ status: "created" });
 });
@@ -86,8 +98,8 @@ options.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 options.secretOrKey = jwtSecretKey.secret;
 
 passport.use(new JwtStrategy(options, function(jwt_payload, done) {
-  console.log("Processing JWT payload for token content:");
-  console.log(jwt_payload);
+  //console.log("Processing JWT payload for token content:");
+  //console.log(jwt_payload);
 
 
   /* Here you could do some processing based on the JWT payload.
@@ -105,32 +117,30 @@ passport.use(new JwtStrategy(options, function(jwt_payload, done) {
 /*
       Core API functionality
 */
-app.get(
-  '/jwtProtectedResource',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    console.log("jwt");
-    res.json(
-      {
-        status: "Successfully accessed protected resource with JWT",
-        user: req.user
-      }
-    );
-  }
-);
 
+/* 
+      POST operation for a new posting for a given user :username, method first checks that the user is who the user says they are
+      it then inserts a new posting into that users account
+*/
 app.post('/users/:username/postings', 
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const authorized_user = req.user.username;
-    const parameters = req.params.username;
-    console.log(authorized_user);
-    console.log(parameters);
+    // const authorized_user = req.user.username;
+    // const parameters = req.params.username;
+    // console.log(authorized_user);
+    // console.log(parameters);
 
-    if(authorized_user != parameters) {
-      return res.sendStatus(401)
+    // if(authorized_user != parameters) {
+    //   return res.sendStatus(401)
+    // }
+    //console.log(req.user.username);
+    //console.log(req.params.username);
+
+    if(req.user.username != req.params.username) {
+      return res.sendStatus(403)
     }
-    console.log(req.body);
+    //console.log(req.body);
+    //console.log(req.body);
 
     if('deliveryType' in req.body) {
       if((req.body.deliveryType == 'delivery') || (req.body.deliveryType == 'pickup')) {
@@ -176,6 +186,65 @@ if('deliveryType' in req.body) {
       return res.sendStatus(400);
     }
 */
+/* 
+      Editing a posting and deleting a posting -> empty "postings.getPosting() returns 'undefined'"
+*/
+app.route('/users/:username/postings/:postId')
+    .put(passport.authenticate('jwt', { session: false }), (req,res) => {
+      if(req.user.username != req.params.username) {
+        return res.sendStatus(403)
+      }
+      console.log(req.params.postId)
+      const postget = postings.getPosting(req.params.postId)
+      console.log(postget)
+      if(postget == undefined) {
+        return res.sendStatus(404)
+      }
+      console.log(postget.username)
+      if(postget.username != req.params.username) {
+        console.log("username test works")
+        return res.sendStatus(403)
+      }
+
+      
+
+
+      res.sendStatus(200);
+    })
+    .delete(passport.authenticate('jwt', { session: false }), (req,res) => {
+      if(req.user.username != req.params.username) {
+        return res.sendStatus(403)
+      }
+      console.log(req.params.postId)
+      const postget = postings.getPosting(req.params.postId)
+      console.log(postget)
+      if(postget == undefined) {
+        return res.sendStatus(404)
+      }
+      console.log(postget.username)
+      if(postget.username != req.params.username) {
+        console.log("username test works")
+        return res.sendStatus(403)
+      }
+
+
+
+      console.log("deletingthegaming");
+      res.sendStatus(200);
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* 
       Logging in with http basic in order to obtain JWT
 */
