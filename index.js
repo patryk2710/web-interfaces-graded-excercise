@@ -191,6 +191,7 @@ if('deliveryType' in req.body) {
 */
 app.route('/users/:username/postings/:postId')
     .put(passport.authenticate('jwt', { session: false }), (req,res) => {
+      // code for validating the user who makes the request
       if(req.user.username != req.params.username) {
         return res.sendStatus(403)
       }
@@ -206,12 +207,13 @@ app.route('/users/:username/postings/:postId')
         return res.sendStatus(403)
       }
 
-      
+      // main editing code
 
 
       res.sendStatus(200);
     })
     .delete(passport.authenticate('jwt', { session: false }), (req,res) => {
+      // code for validating the user
       if(req.user.username != req.params.username) {
         return res.sendStatus(403)
       }
@@ -227,7 +229,26 @@ app.route('/users/:username/postings/:postId')
         return res.sendStatus(403)
       }
 
+      // main deletion code
+      let allpostings = postings.getAllPostings()
+      const indextobedeleted = allpostings.indexOf(postget)
 
+      let deleted = postings.deletePosting(indextobedeleted)
+      const allpostingsafterdeletion = postings.getAllUserPostings(req.params.username)
+      const allallpostings = postings.getAllPostings()
+      // console.log(allpostings);
+
+      // const indextobedeleted = allpostings.indexOf(postget)
+
+      // // console.log(indextobedeleted)
+      // // let deleted = allpostings.splice(indextobedeleted, 1)
+
+      console.log(deleted)
+      console.log("-----------------------------------------")
+      console.log(allpostingsafterdeletion)
+      console.log("-----------------------------------------")
+      console.log(allallpostings)
+      
 
       console.log("deletingthegaming");
       res.sendStatus(200);
