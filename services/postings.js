@@ -22,7 +22,8 @@ module.exports = {
   getAllUserPostings: (username) => postings.filter(p => p.username == username),
   getPosting: (postingId) => postings.find(p => p.id == postingId),
   //deletePosting: (username, index) => (postings.filter(p => p.username == username)).splice(index, 1)
-  deletePosting: (index) => postings.splice(index, 1)
+  deletePosting: (index) => postings.splice(index, 1),
+  updatePosting: (index, newPost) => postings.splice(index, 1, newPost)
 }
 
 //req.body.title, req.body.description, req.body.location, req.body.images, req.body.askingPrice, req.body.dateofPosting, req.body.deliveryType, 

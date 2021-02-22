@@ -208,8 +208,96 @@ app.route('/users/:username/postings/:postId')
       }
 
       // main editing code
+      // part 1. check what are the contents of req
+      console.log(req.body)
+      console.log(postget)
 
+      let allpostings = postings.getAllPostings()
+      const indextobedeleted = allpostings.indexOf(postget)
+      // part 2. send the new "updated post contents" to postings.updatePosting()
+      let upTitle, upDescription, upCategory, upLocation, upImage, upAskingprice, upDateofPosting, upDeliverytype, upContactInfo
+      if('title' in req.body) {
+        upTitle = req.body.title
+      } else {
+        upTitle = postget.title
+      }
 
+      if('description' in req.body) {
+        upDescription = req.body.description
+      } else {
+        upDescription = postget.description
+      }
+
+      if('category' in req.body) {
+        upCategory = req.body.category
+      } else {
+        upCategory = postget.category
+      }
+
+      if('location' in req.body) {
+        upLocation = req.body.location
+      } else {
+        upLocation = postget.location
+      }
+
+      if('images' in req.body) {
+        upImage = req.body.images
+      } else {
+        upImage = postget.image
+      }
+
+      if('askingPrice' in req.body) {
+        upAskingprice = req.body.askingPrice
+      } else {
+        upAskingprice = postget.askingPrice
+      }
+
+      if('dateofPosting' in req.body) {
+        upDateofPosting = req.body.dateofPosting
+      } else {
+        upDateofPosting = postget.dateofPosting
+      }
+
+      if('deliveryType' in req.body) {
+        upDeliverytype = req.body.deliveryType
+      } else {
+        upDeliverytype = postget.deliveryType
+      }
+
+      if('contactInfo' in req.body) {
+        upContactInfo = req.body.contactInfo
+      } else {
+        upContactInfo = postget.contactInfo
+      }
+
+      // part 3. inside this new posting splice a new posting, replacing the old posting with the new one.
+      let updatedData = {
+        id: postget.id,
+        title: upTitle,
+        description: upDescription,
+        category: upCategory,
+        location: upLocation,
+        images: upImage,
+        askingPrice: upAskingprice,
+        dateofPosting: upDateofPosting,
+        deliveryType: upDeliverytype,
+        username: req.params.username,
+        contactInfo: upContactInfo
+      }
+
+      let updated = postings.updatePosting(indextobedeleted, updatedData)
+      let userpostings = postings.getAllUserPostings(req.params.username)
+      let allallpostings = postings.getAllPostings()
+
+      console.log(updatedData)
+      console.log("-----------------------------------------")
+      console.log(updated)
+      console.log("-----------------------------------------")
+      console.log(userpostings)
+      console.log("-----------------------------------------")
+      console.log(allallpostings)
+      // N.B. depending on the contents of req, this will either be creating a new posting or taking the old posting contents and just updating some 
+      // of the parameters.
       res.sendStatus(200);
     })
     .delete(passport.authenticate('jwt', { session: false }), (req,res) => {
@@ -253,18 +341,6 @@ app.route('/users/:username/postings/:postId')
       console.log("deletingthegaming");
       res.sendStatus(200);
     })
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* 
       Logging in with http basic in order to obtain JWT
