@@ -1,12 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-
-const app = express();
 const postings = require('./services/postings');
 const users = require('./services/users');
+const cloudinary = require('cloudinary').v2
+const fs = require('fs')
+
+const multer = require('multer')
+
+const app = express();
+const upload = multer({ dest: 'uploads/'});
 const port = 3000;
 const passport = require('passport');
+const { v4: uuidv4 } = require('uuid');
 
 app.use(express.json());
 
@@ -124,30 +130,42 @@ passport.use(new JwtStrategy(options, function(jwt_payload, done) {
 */
 app.post('/users/:username/postings', 
   passport.authenticate('jwt', { session: false }),
+  upload.any('images'),
   (req, res) => {
-    // const authorized_user = req.user.username;
-    // const parameters = req.params.username;
-    // console.log(authorized_user);
-    // console.log(parameters);
-
-    // if(authorized_user != parameters) {
-    //   return res.sendStatus(401)
-    // }
-    //console.log(req.user.username);
-    //console.log(req.params.username);
-
     if(req.user.username != req.params.username) {
       return res.sendStatus(403)
     }
-    //console.log(req.body);
-    //console.log(req.body);
 
+    console.log(req.body);
+    for(i = 0; i < req.files.length; i++) {
+      console.log(req.files[i]);
+    }
+    
+    var url = 'https://res.cloudinary.com/dvsvon5jp/image/upload/v1614109415/api/'
+    var urls = []
+    var uniqueFilename = []
+    var filetypes = []
+    
+    // setting up the file naming structure etc.
+    for(i = 0; i < req.files.length; i++) {
+      console.log(i)
+      filetypes[i] = (req.files[i]).mimetype.substr(6)
+      console.log((req.files[i]).originalname)
+      uniqueFilename[i] = uuidv4()
+      console.log(uniqueFilename[i])
+      urls[i] = url.concat(uniqueFilename[i],'.',filetypes[i])
+      console.log(urls[i])
+    }
+      
+    console.log(urls)
+
+    // posting the listing into the existing postings
     if('deliveryType' in req.body) {
       if((req.body.deliveryType == 'delivery') || (req.body.deliveryType == 'pickup')) {
         if(('title' in req.body) && ( 'description' in req.body) && ('category' in req.body) && ( 'location' in req.body)
-        && ('images' in req.body) && ('askingPrice' in req.body) && ('dateofPosting' in req.body) && ('contactInfo' in req.body)) {
+         && ('askingPrice' in req.body) && ('dateofPosting' in req.body) && ('contactInfo' in req.body)) {
           console.log('testingssss');
-          postings.insertPosting(req.body.title, req.body.description, req.body.category, req.body.location, req.body.images, req.body.askingPrice, req.body.dateofPosting, req.body.deliveryType, 
+          postings.insertPosting(req.body.title, req.body.description, req.body.category, req.body.location, urls, req.body.askingPrice, req.body.dateofPosting, req.body.deliveryType, 
             req.user.username, req.body.contactInfo);
           //res.setStatus(201);
           res.json(postings.getAllUserPostings(req.user.username));
@@ -161,31 +179,73 @@ app.post('/users/:username/postings',
     else {
       sendStatus(400);
     }
+
+    // uploading the files to cloudinary service
+    for(i = 0; i < req.files.length; i++) {
+      cloudinary.config({
+        cloud_name: 'dvsvon5jp',
+        api_key: '338854426318475',
+        api_secret: 'iRf_3GrMr-ofh10meJ_kGr0u0z8'
+      })
+      console.log(i)
+      console.log(req.files[i].path)
+      const path = req.files[i].path
+  
+      // uploading the file
+      cloudinary.uploader.upload(
+        path,
+        { public_id: `api/${uniqueFilename[i]}`, tags: `api` }, 
+        function() {
+          console.log('file uploaded to Cloudinary')
+          console.log('')
+          // removing the file from local storage
+          fs.unlinkSync(path)
+        }
+      )
+    }
 })
+
 /*
-if('deliveryType' in req.body) {
-      if((req.body.deliveryType) != (('delivery') || ('pickup'))) {
-        console.log('test')
-        console.log(req.body.deliveryType)
-        return res.sendStatus(400);
-      }
-    console.log('testingfirstif')
-    } else if(('title' in req.body) && ( 'description' in req.body) && ('category' in req.body) && ( 'location' in req.body)
-        && ('images' in req.body) && ('askingPrice' in req.body) && ('dateofPosting' in req.body) && ('deliveryType' in req.body) && ('contactInfo' in req.body)) {
-          console.log('testingesss');
-          postings.insertPosting(req.body.title, req.body.description, req.body.category, req.body.location, req.body.images, req.body.askingPrice, req.body.dateofPosting, req.body.deliveryType, 
-          req.user.username, req.body.contactInfo);
-      
-          console.log('KEKW2')
-          res.setStatus(201);
-          res.json(postings.getAllUserPostings(req.user.username));
-      
-    }
-    else {
-      console.log('KEKW')
-      return res.sendStatus(400);
-    }
+      GET operation for getting all postings and searching for postings
 */
+app.get('/postings/search', (req, res) => {
+  
+  let category = req.query.category
+  let location = req.query.location
+  let dateofPosting = req.query.dateofPosting
+
+  if((category == undefined) && (location == undefined) && (dateofPosting == undefined)) {
+    const posts = postings.getAllPostings()
+    res.status(200)
+    res.json(posts)
+    return
+  }
+
+  if(category != undefined) {
+    const posts = postings.getPostingbyCategory(category)
+    console.log(posts)
+    res.status(200)
+    res.json(posts)
+    return
+  }
+
+  if(location != undefined) {
+    const posts = postings.getPostingbyLocation(location)
+    console.log(posts)
+    res.status(200)
+    res.json(posts)
+    return
+  }
+
+  if(dateofPosting != undefined) {
+    const posts = postings.getPostingbyDate(dateofPosting)
+    console.log(posts)
+    res.status(200)
+    res.json(posts)
+    return
+  }
+  return res.sendStatus(400)
+});
 /* 
       Editing a posting and deleting a posting -> empty "postings.getPosting() returns 'undefined'"
 */
@@ -208,14 +268,13 @@ app.route('/users/:username/postings/:postId')
       }
 
       // main editing code
-      // part 1. check what are the contents of req
       console.log(req.body)
       console.log(postget)
 
       let allpostings = postings.getAllPostings()
       const indextobedeleted = allpostings.indexOf(postget)
-      // part 2. send the new "updated post contents" to postings.updatePosting()
-      let upTitle, upDescription, upCategory, upLocation, upImage, upAskingprice, upDateofPosting, upDeliverytype, upContactInfo
+      
+      let upTitle, upDescription, upCategory, upLocation, upAskingprice, upDateofPosting, upDeliverytype, upContactInfo
       if('title' in req.body) {
         upTitle = req.body.title
       } else {
@@ -270,14 +329,13 @@ app.route('/users/:username/postings/:postId')
         upContactInfo = postget.contactInfo
       }
 
-      // part 3. inside this new posting splice a new posting, replacing the old posting with the new one.
       let updatedData = {
         id: postget.id,
         title: upTitle,
         description: upDescription,
         category: upCategory,
         location: upLocation,
-        images: upImage,
+        images: postget.images,
         askingPrice: upAskingprice,
         dateofPosting: upDateofPosting,
         deliveryType: upDeliverytype,
@@ -296,8 +354,7 @@ app.route('/users/:username/postings/:postId')
       console.log(userpostings)
       console.log("-----------------------------------------")
       console.log(allallpostings)
-      // N.B. depending on the contents of req, this will either be creating a new posting or taking the old posting contents and just updating some 
-      // of the parameters.
+    
       res.sendStatus(200);
     })
     .delete(passport.authenticate('jwt', { session: false }), (req,res) => {
@@ -324,12 +381,6 @@ app.route('/users/:username/postings/:postId')
       let deleted = postings.deletePosting(indextobedeleted)
       const allpostingsafterdeletion = postings.getAllUserPostings(req.params.username)
       const allallpostings = postings.getAllPostings()
-      // console.log(allpostings);
-
-      // const indextobedeleted = allpostings.indexOf(postget)
-
-      // // console.log(indextobedeleted)
-      // // let deleted = allpostings.splice(indextobedeleted, 1)
 
       console.log(deleted)
       console.log("-----------------------------------------")

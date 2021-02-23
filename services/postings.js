@@ -21,18 +21,10 @@ module.exports = {
   getAllPostings: () => postings,
   getAllUserPostings: (username) => postings.filter(p => p.username == username),
   getPosting: (postingId) => postings.find(p => p.id == postingId),
-  //deletePosting: (username, index) => (postings.filter(p => p.username == username)).splice(index, 1)
   deletePosting: (index) => postings.splice(index, 1),
-  updatePosting: (index, newPost) => postings.splice(index, 1, newPost)
+  updatePosting: (index, newPost) => postings.splice(index, 1, newPost),
+  getPostingbyCategory: (category) => postings.filter(c => c.category == category),
+  getPostingbyLocation: (location) => postings.filter(l => l.location == location),
+  getPostingbyDate: (dateofPosting) => postings.filter(d => d.dateofPosting == dateofPosting)
 }
 
-//req.body.title, req.body.description, req.body.location, req.body.images, req.body.askingPrice, req.body.dateofPosting, req.body.deliveryType, 
-//req.user.username, req.body.contactInfo
-/*todos.push({
-      id: uuidv4(),
-      userId,
-      description,
-      dueDate,
-      status: "open"
-    });
-*/
