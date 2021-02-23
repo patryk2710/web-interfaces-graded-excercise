@@ -183,9 +183,9 @@ app.post('/users/:username/postings',
     // uploading the files to cloudinary service
     for(i = 0; i < req.files.length; i++) {
       cloudinary.config({
-        cloud_name: 'dvsvon5jp',
-        api_key: '338854426318475',
-        api_secret: 'iRf_3GrMr-ofh10meJ_kGr0u0z8'
+        cloud_name: 'd*******',
+        api_key: '***************',
+        api_secret: '******************'
       })
       console.log(i)
       console.log(req.files[i].path)
