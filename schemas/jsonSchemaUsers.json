@@ -1,0 +1,65 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://github.com/patryk2710/web-interfaces-graded-excercise",
+    "type": "object",
+    "title": "The users schema",
+    "description": "This is the schema for validating users registration",
+    "default": {},
+    "examples": [
+        {
+            "username": "david234",
+            "password": "test123",
+            "firstName": "David",
+            "lastName": "Davidson"
+        }
+    ],
+    "required": [
+        "username",
+        "password",
+        "firstName",
+        "lastName"
+    ],
+    "properties": {
+        "username": {
+            "$id": "#/properties/username",
+            "type": "string",
+            "title": "The username schema",
+            "description": "The username the registering user entered",
+            "default": "",
+            "examples": [
+                "david234"
+            ]
+        },
+        "password": {
+            "$id": "#/properties/password",
+            "type": "string",
+            "title": "The password schema",
+            "description": "The password the user has entered",
+            "default": "",
+            "examples": [
+                "test123"
+            ]
+        },
+        "firstName": {
+            "$id": "#/properties/firstName",
+            "type": "string",
+            "title": "The firstName schema",
+            "description": "The users first name",
+            "default": "",
+            "examples": [
+                "David"
+            ]
+        },
+        "lastName": {
+            "$id": "#/properties/lastName",
+            "type": "string",
+            "title": "The lastName schema",
+            "description": "The users last name",
+            "default": "",
+            "examples": [
+                "Davidson"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

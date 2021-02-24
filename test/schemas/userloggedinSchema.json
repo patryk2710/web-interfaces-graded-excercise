@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://github.com/patryk2710/web-interfaces-graded-excercise",
+    "type": "object",
+    "title": "Logged in successfully",
+    "description": "The schema for if the user logs in successfully",
+    "default": {},
+    "examples": [
+        {
+            "token": "eUwMCwiZXhwIjoxNjE0MjY3OTAwfQ.aFiP9NBPH6uALsZBeFrEYWvx4nAB5x4yKdIZSioaA_E"
+        }
+    ],
+    "required": [
+        "token"
+    ],
+    "properties": {
+        "token": {
+            "$id": "#/properties/token",
+            "type": "string",
+            "title": "The token schema",
+            "description": "The token that gets returned in a successfuly case",
+            "default": "",
+            "examples": [
+                "eUwMCwiZXhwIjoxNjE0MjY3OTAwfQ.aFiP9NBPH6uALsZBeFrEYWvx4nAB5x4yKdIZSioaA_E"
+            ]
+        }
+    },
+    "additionalProperties": true
+}

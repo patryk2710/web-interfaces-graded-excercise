@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "Creation Schema",
+    "description": "Schema for the passing case of user creation during testing",
+    "default": {},
+    "examples": [
+        {
+            "status": "User Created",
+            "username": "david"
+        }
+    ],
+    "required": [
+        "status",
+        "username"
+    ],
+    "properties": {
+        "status": {
+            "$id": "#/properties/status",
+            "type": "string",
+            "title": "The status schema",
+            "description": "the status that the server returns",
+            "default": "",
+            "examples": [
+                "User Created"
+            ]
+        },
+        "username": {
+            "$id": "#/properties/username",
+            "type": "string",
+            "title": "The username schema",
+            "description": "The username that was used in creating a new user",
+            "default": "",
+            "examples": [
+                "david"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

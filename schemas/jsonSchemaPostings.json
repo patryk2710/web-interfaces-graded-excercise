@@ -1,0 +1,114 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://github.com/patryk2710/web-interfaces-graded-excercise",
+    "type": "object",
+    "title": "The postings schema",
+    "description": "The postings schema used for validating submitted postings",
+    "default": {},
+    "examples": [
+        {
+            "title": "Amazing used bike",
+            "description": "Barely used great bike for winter",
+            "category": "Bicycles",
+            "location": "Oulu, FI",
+            "askingPrice": "149.75",
+            "dateofPosting": "2017-11-24",
+            "deliveryType": "Pickup",
+            "contactInfo": "david@email.com"
+        }
+    ],
+    "required": [
+        "title",
+        "description",
+        "category",
+        "location",
+        "askingPrice",
+        "dateofPosting",
+        "deliveryType",
+        "contactInfo"
+    ],
+    "properties": {
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "title": "The title schema",
+            "description": "This is the user submitted title",
+            "default": "",
+            "examples": [
+                "Amazing used bike"
+            ]
+        },
+        "description": {
+            "$id": "#/properties/description",
+            "type": "string",
+            "title": "The description schema",
+            "description": "This is the user submitted description",
+            "default": "",
+            "examples": [
+                "Barely used great bike for winter"
+            ]
+        },
+        "category": {
+            "$id": "#/properties/category",
+            "type": "string",
+            "title": "The category schema",
+            "description": "This is the user submitted category",
+            "default": "",
+            "examples": [
+                "Bicycles"
+            ]
+        },
+        "location": {
+            "$id": "#/properties/location",
+            "type": "string",
+            "title": "The location schema",
+            "description": "This is the user submitted user location",
+            "default": "",
+            "examples": [
+                "Oulu, FI"
+            ]
+        },
+        "askingPrice": {
+            "$id": "#/properties/askingPrice",
+            "type": "string",
+            "title": "The askingPrice schema",
+            "description": "This is the user submitted asking price",
+            "default": 0.0,
+            "examples": [
+                149.75
+            ]
+        },
+        "dateofPosting": {
+            "$id": "#/properties/dateofPosting",
+            "type": "string",
+            "title": "The dateofPosting schema",
+            "description": "This is the date at which the posting was sent in",
+            "default": "",
+            "examples": [
+                "2017-11-24"
+            ]
+        },
+        "deliveryType": {
+            "$id": "#/properties/deliveryType",
+            "type": "string",
+            "enum": ["pickup", "delivery"],
+            "title": "The deliveryType schema",
+            "description": "This is the users chosen delivery type",
+            "default": "",
+            "examples": [
+                "Pickup"
+            ]
+        },
+        "contactInfo": {
+            "$id": "#/properties/contactInfo",
+            "type": "string",
+            "title": "The contactInfo schema",
+            "description": "This is the user's contact information",
+            "default": "",
+            "examples": [
+                "david@email.com"
+            ]
+        }
+    },
+    "additionalProperties": false
+}
