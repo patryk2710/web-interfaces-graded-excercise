@@ -11,11 +11,12 @@ const multer = require('multer')
 
 const app = express();
 const upload = multer({ dest: 'uploads/'});
-const port = 3000;
 const passport = require('passport');
 const { v4: uuidv4 } = require('uuid');
 const jsonSchemaUsers = require('./schemas/jsonSchemaUsers.json')
 const jsonSchemaPostings = require('./schemas/jsonSchemaPostings.json')
+
+app.set('port', (process.env.PORT || 80))
 
 app.use(express.json());
 
@@ -182,9 +183,9 @@ app.post('/users/:username/postings',
       // uploading the files to cloudinary service
       for(i = 0; i < req.files.length; i++) {
         cloudinary.config({
-          cloud_name: '***************',
-          api_key: '*******************',
-          api_secret: '***********************'
+          cloud_name: process.env.cloudname,
+          api_key: process.env.apikey,
+          api_secret: process.env.apisecret
         })
         console.log(i)
         console.log(req.files[i].path)
@@ -438,8 +439,8 @@ let serverInstance = null
 
 module.exports = {
     start: function() {
-        serverInstance = app.listen(port, () => {
-            console.log(`Graded Excercise API listening at http://localhost:${port}`)
+        serverInstance = app.listen(app.get('port'), () => {
+            console.log(`Graded Excercise API listening at `, app.get('port'))
         })
     },
     close: function() {
