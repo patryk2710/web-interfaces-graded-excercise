@@ -16,8 +16,6 @@ const { v4: uuidv4 } = require('uuid');
 const jsonSchemaUsers = require('./schemas/jsonSchemaUsers.json')
 const jsonSchemaPostings = require('./schemas/jsonSchemaPostings.json')
 
-app.set('port', (process.env.PORT || 80))
-
 app.use(express.json());
 
 /*
@@ -439,9 +437,7 @@ let serverInstance = null
 
 module.exports = {
     start: function() {
-        serverInstance = app.listen(app.get('port'), () => {
-            console.log(`Graded Excercise API listening at `, app.get('port'))
-        })
+        serverInstance = app.listen(process.env.PORT || 3000)
     },
     close: function() {
         serverInstance.close()
