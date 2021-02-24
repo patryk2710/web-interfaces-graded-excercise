@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/patryk2710/web-interfaces-graded-excercise#readme",
   "dependencies": {
+    "ajv": "^7.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.25.0",
@@ -28,5 +29,11 @@
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.0",
+    "chai-http": "^4.3.0",
+    "chai-json-schema-ajv": "^5.2.3",
+    "mocha": "^8.3.0"
   }
 }
