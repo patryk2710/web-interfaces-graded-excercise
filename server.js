@@ -80,8 +80,13 @@ app.post('/users',
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy,
       ExtractJwt = require('passport-jwt').ExtractJwt;
-const jwtSecretKey = require('./jwt-key.json');
+let jwtSecretKey = null;
 
+if(process.env.JWTKEY === undefined) {
+  jwtSecretKey = require('./jwt-key.json').secret
+} else {
+  jwtSecretKey = process.env.JWTKEY;
+}
 
 let options = {}
 
@@ -91,7 +96,7 @@ options.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 
 /* This is the secret signing key.
    You should NEVER store it in code  */
-options.secretOrKey = jwtSecretKey.secret;
+options.secretOrKey = jwtSecretKey;
 
 passport.use(new JwtStrategy(options, function(jwt_payload, done) {
 
@@ -267,6 +272,23 @@ app.get('/postings/search', (req, res) => {
   }
   return res.sendStatus(400)
 });
+
+app.get('/postings/:username', (req, res) => {
+  let name = req.params.username;
+
+  const usertosearch = users.getUserByName(name)
+  if(usertosearch == undefined) {
+    res.status(404)
+    res.json({ status: "User not Found"})
+    return
+  } else {
+    let posts = postings.getAllUserPostings(req.params.username)
+    res.status(200)
+    console.log(posts)
+    res.json(posts)
+    return
+  }
+})
 /* 
       Editing a posting and deleting a posting -> empty "postings.getPosting() returns 'undefined'"
 */
@@ -428,7 +450,7 @@ app.get(
     /* Sign the token with payload, key and options.
        Detailed documentation of the signing here:
        https://github.com/auth0/node-jsonwebtoken#readme */
-    const token = jwt.sign(payload, jwtSecretKey.secret, options);
+    const token = jwt.sign(payload, jwtSecretKey, options);
 
     return res.json({ token });
 })
