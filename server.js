@@ -447,12 +447,14 @@ app.get(
       expiresIn: '1d'
     }
 
+    const username = req.user.username
+
     /* Sign the token with payload, key and options.
        Detailed documentation of the signing here:
        https://github.com/auth0/node-jsonwebtoken#readme */
     const token = jwt.sign(payload, jwtSecretKey, options);
 
-    return res.json({ token });
+    return res.json({ token, username });
 })
 
 let serverInstance = null
