@@ -18,6 +18,10 @@ const jsonSchemaPostings = require('./schemas/jsonSchemaPostings.json')
 
 app.use(express.json());
 
+app.get('/', function(req, res) {
+  res.send("Hello world");
+});
+
 /*
       BASIC authentication used in the implementation of the JWT key 
       http basic authentication is used during the login process in order to
@@ -141,11 +145,11 @@ app.post('/users/:username/postings',
     
     if(valid == true) {
 
+      var urls = []
       if(req.files.length == 0) {
-        res.status(400)
-        res.json('Missing image(s) from the submission')
-        return
+        urls[0] = 'https://res.cloudinary.com/dvsvon5jp/image/upload/v1614515380/api/Untitled_uyvrd1.png'
       }
+      console.log(urls[0])
       if(req.files.length > 4) {
         res.status(400)
         res.json('Maximum amount of images allowed is 4')
@@ -162,7 +166,6 @@ app.post('/users/:username/postings',
       }
       
       var url = 'https://res.cloudinary.com/dvsvon5jp/image/upload/v1614109415/api/'
-      var urls = []
       var uniqueFilename = []
       var filetypes = []
       
