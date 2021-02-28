@@ -145,6 +145,7 @@ app.post('/users/:username/postings',
     
     if(valid == true) {
 
+      console.log('jsonvalidated')
       var urls = []
       if(req.files.length == 0) {
         urls[0] = 'https://res.cloudinary.com/dvsvon5jp/image/upload/v1614515380/api/Untitled_uyvrd1.png'
