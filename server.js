@@ -133,6 +133,8 @@ app.post('/users/:username/postings',
       return res.sendStatus(403)
     }
 
+    console.log(req.body)
+
     const ajv = new Ajv();
     const validate = ajv.compile(jsonSchemaPostings);
     const valid = validate(req.body);
