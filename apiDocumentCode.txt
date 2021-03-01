@@ -1,0 +1,383 @@
+openapi: 3.0.0
+info:
+  title: Graded Excerise
+  version: '1.0'
+  description: OpenAPI created for the Web Interfaces Graded Excercise
+  contact:
+    name: Patryk
+servers:
+  - url: 'https://webinterfaces-api-patrykr.herokuapp.com'
+paths:
+  '/users/{username}/postings':
+    post:
+      summary: Creating a posting
+      operationId: post-postings
+      responses:
+        '201':
+          description: Postings created successfully - returns all users postings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  postings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Posting'
+        '400':
+          description: Bad Request - Missing or incorrect values in the posting data
+        '401':
+          description: Unauthorized - Please log in first to create a posting
+        '403':
+          description: Forbidden
+      description: Allows logged in users to submit item for sale
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                Posting:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Posting'
+            examples:
+              example-1:
+                value: {}
+        description: This is the information that the user sends to create a posting
+      tags:
+        - POST
+        - CREATE
+        - POSTINGS
+      security:
+        - JWT authorization: []
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+  '/users/{username}/postings/{post-id}':
+    delete:
+      summary: Delete Postings
+      operationId: 'delete-postings-:id'
+      responses:
+        '200':
+          description: Listing Deleted Successfully
+        '400':
+          description: Incorrect or missing information in the request
+        '401':
+          description: Please log in to delete this listing
+        '403':
+          description: You do not have access to this listing
+        '404':
+          description: 404 Listing Not Found
+        '500':
+          description: Internal Server Error
+      description: Allows a logged in user to delete a listing
+      tags:
+        - DELETE
+        - EDIT
+        - POSTINGS
+    put:
+      summary: Edit postings
+      operationId: 'put-postings-:id'
+      responses:
+        '200':
+          description: Resource successfully updated
+        '400':
+          description: Incorrect information in the request
+        '401':
+          description: Please log in to edit this listing
+        '403':
+          description: You do not have access to this listing
+        '404':
+          description: 404 Listing Not Found
+        '500':
+          description: Internal Server Error
+      description: Allows a logged in user to modify their posting
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              description: ''
+              type: object
+              properties:
+                Title:
+                  type: string
+                  minLength: 1
+                Description:
+                  type: string
+                  minLength: 1
+                Category:
+                  type: string
+                  minLength: 1
+                Location:
+                  type: string
+                  minLength: 1
+                Images:
+                  type: string
+                  minLength: 1
+                  format: binary
+                Asking-Price:
+                  type: number
+                  format: float
+                Delivery-Type:
+                  type: string
+                  minLength: 1
+        description: Information the user can send to be updated
+      tags:
+        - PUT
+        - EDIT
+        - POSTINGS
+      security:
+        - JWT authorization: []
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: post-id
+        in: path
+        required: true
+  /users:
+    post:
+      summary: Create a new user
+      operationId: post-users
+      description: Lets any user register a new user in the system
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Information entered by user to register into the system
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Bad Request - Missing or incorrect values in the registration data
+        '500':
+          description: Internal Server Error
+      tags:
+        - POST
+        - CREATE
+        - USERS
+  /users/login:
+    get:
+      summary: Login a user
+      tags:
+        - GET
+        - USERS
+      responses:
+        '200':
+          description: User logged in succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Login token sent after successful connection to API
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyLCJlbWFpbCI6ImpvaG5AbWFpbC5jb20ifSwiaWF0IjoxNjEyMTk4MzgyLCJleHAiOjE2MTIyODQ3ODJ9.luc3mqKSi9BZ6O68ECskXFTG6ks562FAQ_6LiUkK-40
+                  username:
+                    type: string
+                    example: johndoe
+                required:
+                  - token
+                  - username
+        '401':
+          description: Incorrect username or password
+      operationId: 'get-users-:id'
+      description: 'Allows users to login into the system, authorizing them to perform more actions'
+      parameters: []
+      security:
+        - HTTP Basic: []
+    parameters: []
+  /postings/search:
+    parameters: []
+    get:
+      summary: Searching for a posting
+      tags:
+        - GET
+        - SEARCH
+        - POSTINGS
+      responses:
+        '200':
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  Posting:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Posting'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-postings-category
+      description: 'Allows any user to look up postings based on category, location or date, by inputting it as a query parameter in the URI, if nothing is entered returen all postings'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: Category
+          description: Search based on category
+        - schema:
+            type: string
+          in: query
+          name: Location
+          description: Search based on location
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: Date-of-Posting
+          description: Search based on date of posting
+  '/postings/{username}':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    get:
+      summary: Looking up all user postings
+      tags:
+        - GET
+        - POSTINGS
+        - SEARCH
+      responses:
+        '200':
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Posting'
+        '400':
+          description: Bad Request
+        '404':
+          description: User Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-postings-username
+      description: This is the endpoint for searching up for all of a certain users postings
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: ''
+      x-examples:
+        David:
+          username: david234
+          password: test123
+          firstName: David
+          lastName: Davidson
+      properties:
+        username:
+          type: string
+          description: Unique username for the given user.
+          example: david234
+        password:
+          type: string
+          description: Password for the user to log in with
+          example: test123
+        firstName:
+          type: string
+          description: Users first name
+          example: David
+        lastName:
+          type: string
+          description: Users last name
+          example: Davidson
+      required:
+        - username
+        - firstName
+        - lastName
+        - password
+    Posting:
+      title: Posting
+      type: object
+      description: Describes a user created posting
+      x-examples:
+        David's Bike:
+          title: Amazing used bike
+          description: Barely used great bike for winter
+          category: Bicycles
+          location: 'Oulu, FI'
+          images: string
+          askingPrice: 149.75
+          dateofPosting: '2017-11-24'
+          deliveryType: Pickup
+          contactInfo: david@email.com
+      properties:
+        title:
+          type: string
+          example: Amazing used bike
+        description:
+          type: string
+          example: Barely used great bike for winter
+        category:
+          type: string
+          example: Bicycles
+        location:
+          type: string
+          example: 'Oulu, FI'
+        images:
+          type: string
+          format: binary
+        askingPrice:
+          type: number
+          format: float
+          example: 149.75
+        dateofPosting:
+          type: string
+          format: date
+          example: '2017-11-24'
+        deliveryType:
+          type: string
+          example: Pickup
+        contactInfo:
+          type: string
+          example: david@email.com
+      required:
+        - title
+        - description
+        - category
+        - location
+        - images
+        - askingPrice
+        - dateofPosting
+        - deliveryType
+        - contactInfo
+  securitySchemes:
+    HTTP Basic:
+      type: http
+      scheme: basic
+    JWT authorization:
+      type: http
+      scheme: bearer
+tags:
+  - name: GET
+  - name: SEARCH
+  - name: POST
+  - name: CREATE
+  - name: POSTINGS
+  - name: PUT
+  - name: EDIT
+  - name: USERS
+  - name: DELETE
