@@ -185,7 +185,8 @@ paths:
                   token:
                     type: string
                     description: Login token sent after successful connection to API
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyLCJlbWFpbCI6ImpvaG5AbWFpbC5jb20ifSwiaWF0IjoxNjEyMTk4MzgyLCJleHAiOjE2MTIyODQ3ODJ9.luc3mqKSi9BZ6O68ECskXFTG6ks562FAQ_6LiUkK-40
+                    example: >-
+                      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyLCJlbWFpbCI6ImpvaG5AbWFpbC5jb20ifSwiaWF0IjoxNjEyMTk4MzgyLCJleHAiOjE2MTIyODQ3ODJ9.luc3mqKSi9BZ6O68ECskXFTG6ks562FAQ_6LiUkK-40
                   username:
                     type: string
                     example: johndoe
@@ -195,7 +196,9 @@ paths:
         '401':
           description: Incorrect username or password
       operationId: 'get-users-:id'
-      description: 'Allows users to login into the system, authorizing them to perform more actions'
+      description: >-
+        Allows users to login into the system, authorizing them to perform more
+        actions
       parameters: []
       security:
         - HTTP Basic: []
@@ -227,7 +230,10 @@ paths:
         '500':
           description: Internal Server Error
       operationId: get-postings-category
-      description: 'Allows any user to look up postings based on category, location or date, by inputting it as a query parameter in the URI, if nothing is entered returen all postings'
+      description: >-
+        Allows any user to look up postings based on category, location or date,
+        by inputting it as a query parameter in the URI, if nothing is entered
+        returen all postings
       parameters:
         - schema:
             type: string
@@ -274,7 +280,9 @@ paths:
         '500':
           description: Internal Server Error
       operationId: get-postings-username
-      description: This is the endpoint for searching up for all of a certain users postings
+      description: >-
+        This is the endpoint for searching up for all of a certain users
+        postings
 components:
   schemas:
     User:
